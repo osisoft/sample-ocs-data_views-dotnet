@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataViews", "DataViews\DataViews.csproj", "{8022EA1F-74BA-4F37-961C-9542494A4EE0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataViewsTests", "DataViewsTests\DataViewsTests.csproj", "{048D18C6-0BEF-4EF6-B322-BEC16D18F9A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7918E9D1-E7C4-4DC5-BEF8-759B011ADA19}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		azure-pipeline.yml = azure-pipeline.yml
+		HISTORY.md = HISTORY.md
+		polaris.yml = polaris.yml
+		README.md = README.md
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8022EA1F-74BA-4F37-961C-9542494A4EE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8022EA1F-74BA-4F37-961C-9542494A4EE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8022EA1F-74BA-4F37-961C-9542494A4EE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8022EA1F-74BA-4F37-961C-9542494A4EE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{048D18C6-0BEF-4EF6-B322-BEC16D18F9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{048D18C6-0BEF-4EF6-B322-BEC16D18F9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{048D18C6-0BEF-4EF6-B322-BEC16D18F9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{048D18C6-0BEF-4EF6-B322-BEC16D18F9A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7BFB750-344E-4032-813C-BA025F785449}
+	EndGlobalSection
+EndGlobal
