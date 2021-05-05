@@ -12,8 +12,6 @@ When working in .NET, it is recommended that you use the OCS Client Libraries me
 
 Developed against DotNet 5.0.
 
-## Running the Sample
-
 ## Getting Started
 
 In this example we assume that you have the dotnet core CLI.
