@@ -378,8 +378,6 @@ namespace DataViews
 
                 #endregion //step11
 
-
-
                 // Step 12 - Add Units of Measure Column
                 #region step12
                 Console.WriteLine("Step 12: Add Units of Measure Column");
@@ -417,27 +415,13 @@ namespace DataViews
                 var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
                 // Deep copy twice the field to be summarized
-                Field summaryField1 = new Field();
-                summaryField1.Source = fieldToSummarize.Source;
-                summaryField1.Label = fieldToSummarize.Label;
-                summaryField1.IncludeUom = fieldToSummarize.IncludeUom;
+                Field summaryField1 = new Field() { Source = fieldToSummarize.Source, Label = fieldToSummarize.Label, IncludeUom = fieldToSummarize.IncludeUom };
+                Field summaryField2 = new Field() { Source = fieldToSummarize.Source, Label = fieldToSummarize.Label, IncludeUom = fieldToSummarize.IncludeUom };
 
-                Field summaryField2 = new Field();
-                summaryField2.Source = fieldToSummarize.Source;
-                summaryField2.Label = fieldToSummarize.Label;
-                summaryField2.IncludeUom = fieldToSummarize.IncludeUom;
-
-                foreach (var key in fieldToSummarize.Keys)
-                {
-                    summaryField1.Keys.Add(key);
-                    summaryField2.Keys.Add(key);
-                }
-
-                foreach (var streamRefName in fieldToSummarize.StreamReferenceNames)
-                {
-                    summaryField1.Keys.Add(streamRefName);
-                    summaryField2.Keys.Add(streamRefName);
-                }
+                ((List<string>)summaryField1.Keys).AddRange(fieldToSummarize.Keys);
+                ((List<string>)summaryField2.Keys).AddRange(fieldToSummarize.Keys);
+                ((List<string>)summaryField1.StreamReferenceNames).AddRange(fieldToSummarize.StreamReferenceNames);
+                ((List<string>)summaryField2.StreamReferenceNames).AddRange(fieldToSummarize.StreamReferenceNames);
 
                 // Set the summary properties on the new fields and add them to the FieldSet
                 summaryField1.SummaryDirection = SummaryDirection.Forward;
