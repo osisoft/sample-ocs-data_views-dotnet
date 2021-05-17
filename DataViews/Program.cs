@@ -241,12 +241,11 @@ namespace DataViews
                 Console.WriteLine($"Available fields for data view {dataView.Name}:");
                 foreach (var fieldset in availableFields.Items)
                 {
-                    Console.WriteLine($"Fieldset:");
-                    Console.WriteLine($"QueryId: {fieldset.QueryId}");
-                    Console.WriteLine($"Data Fields: ");
+                    Console.WriteLine($"  QueryId: {fieldset.QueryId}");
+                    Console.WriteLine($"  Data Fields: ");
                     foreach (var datafield in fieldset.DataFields)
                     {
-                        Console.Write($"Label: {datafield.Label}");
+                        Console.Write($"    Label: {datafield.Label}");
                         Console.Write($", Source: {datafield.Source}");
                         foreach (var key in datafield.Keys)
                         {
