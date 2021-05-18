@@ -176,7 +176,7 @@ namespace DataViews
                 };
                 dataView = await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
                 #endregion //step3
-                
+
                 // Step 4 - Retrieve the Data View
                 #region step4
                 Console.WriteLine("Step 4: Retrieve the Data View");
@@ -199,7 +199,7 @@ namespace DataViews
                     Kind = DataItemResourceType.Stream,
                 };
 
-                AddQueryToDataView(dataView, query);
+                dataView.Queries.Add(query);
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
                 #endregion //step5
@@ -254,7 +254,7 @@ namespace DataViews
                         Console.Write('\n');
                     }
                 }
-                
+
                 Console.WriteLine();
                 #endregion //step7
 
@@ -262,9 +262,9 @@ namespace DataViews
                 #region step8
                 Console.WriteLine("Step 8: Include Some of the Available Fields");
 
-                foreach (var thisFieldSet in availableFields.Items)
+                foreach (var field in availableFields.Items)
                 {
-                    AddFieldSetToDataView(dataView, thisFieldSet);
+                    dataView.DataFieldSets.Add(field);
                 }
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
@@ -290,7 +290,7 @@ namespace DataViews
                 #region step9
                 Console.WriteLine("Step 9: Group the Data View");
 
-                AddFieldToGroupingFields(dataView, new Field
+                dataView.GroupingFields.Add(new Field
                 {
                     Source = FieldSource.Id,
                     Label = "{IdentifyingValue} {Key}",
@@ -351,11 +351,11 @@ namespace DataViews
                 #region step11
                 Console.WriteLine("Step 11: Consolidate Data Fields");
 
-                var fieldSet = FindFieldSetByTargetQuery(dataView, sampleQueryId);
-                RemoveFieldFromFieldSetByKey(fieldSet, sampleFieldToConsolidate);
+                var fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
+                fieldSet.DataFields.Remove(fieldSet.DataFields.Single(a => a.Keys.Contains(sampleFieldToConsolidate)));
 
-                var consolidatingField = FindFieldByTargetKey(fieldSet, sampleFieldToConsolidateTo);
-                AddKeyToField(consolidatingField, sampleFieldToConsolidate);
+                var consolidatingField = fieldSet.DataFields.Single(a => a.Keys.Contains(sampleFieldToConsolidateTo));
+                consolidatingField.Keys.Add(sampleFieldToConsolidate);
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
@@ -379,10 +379,10 @@ namespace DataViews
                 // Step 12 - Add Units of Measure Column
                 #region step12
                 Console.WriteLine("Step 12: Add Units of Measure Column");
-                fieldSet = FindFieldSetByTargetQuery(dataView, sampleQueryId);
+                fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
 
-                var uomField1 = FindFieldByTargetKey(fieldSet, uomColumn1);
-                var uomField2 = FindFieldByTargetKey(fieldSet, uomColumn2);
+                var uomField1 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn1));
+                var uomField2 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn2));
 
                 uomField1.IncludeUom = true;
                 uomField2.IncludeUom = true;
@@ -408,9 +408,9 @@ namespace DataViews
                 // Step 13 - Add Summary Columns
                 #region step13
                 Console.WriteLine("Step 13: Add Summaries Columns");
-                fieldSet = FindFieldSetByTargetQuery(dataView, sampleQueryId);
+                fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
 
-                var fieldToSummarize = FindFieldByTargetKey(fieldSet, summaryField);
+                var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
                 // Make two copies of the field to be summarized
                 var summaryField1 = fieldToSummarize.Clone();
@@ -423,9 +423,8 @@ namespace DataViews
                 summaryField2.SummaryDirection = SummaryDirection.Forward;
                 summaryField2.SummaryType = summaryType2;
 
-
-                AddFieldToFieldSet(fieldSet, summaryField1);
-                AddFieldToFieldSet(fieldSet, summaryField2);
+                fieldSet.DataFields.Add(summaryField1);
+                fieldSet.DataFields.Add(summaryField2);
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
@@ -492,46 +491,6 @@ namespace DataViews
                 throw _toThrow;
 
             return _toThrow == null;
-        }
-
-        private static void AddFieldSetToDataView(DataView dataView, FieldSet fieldSet)
-        {
-            dataView.DataFieldSets.Add(fieldSet);
-        }
-
-        private static void AddFieldToFieldSet(FieldSet fieldSet, Field field)
-        {
-            fieldSet.DataFields.Add(field);
-        }
-
-        private static void AddFieldToGroupingFields(DataView dataView, Field field)
-        {
-            dataView.GroupingFields.Add(field);
-        }
-
-        private static void AddKeyToField(Field field, string key)
-        {
-            field.Keys.Add(key);
-        }
-
-        private static void AddQueryToDataView(DataView dataView, Query query)
-        {
-            dataView.Queries.Add(query);
-        }
-
-        private static Field FindFieldByTargetKey(FieldSet fieldSet, string targetKey)
-        {
-            return fieldSet.DataFields.Single(a => a.Keys.Contains(targetKey));
-        }
-
-        private static FieldSet FindFieldSetByTargetQuery(DataView dataView, string targetQuery)
-        {
-            return dataView.DataFieldSets.Single(a => a.QueryId == targetQuery);
-        }
-
-        private static void RemoveFieldFromFieldSetByKey(FieldSet fieldSet, string key)
-        {
-            fieldSet.DataFields.Remove(FindFieldByTargetKey(fieldSet, key));
         }
 
         /// <summary>
