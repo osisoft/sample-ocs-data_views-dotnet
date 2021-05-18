@@ -50,7 +50,6 @@ namespace DataViews
             SdsSummaryType summaryType1 = SdsSummaryType.Mean;
             SdsSummaryType summaryType2 = SdsSummaryType.Total;
 
-
             // Data View Information
             var sampleDataViewId = "DataView_Sample";
             var sampleDataViewName = "DataView_Sample_Name";

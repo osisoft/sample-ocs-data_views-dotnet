@@ -13,13 +13,14 @@ namespace DataViews
             if (field == null)
                 throw new ArgumentNullException(nameof(field));
 
-            Field newField = new Field();
-
-            newField.Source = field.Source;
-            newField.IncludeUom = field.IncludeUom;
-            newField.Label = field.Label;
-            newField.SummaryDirection = field.SummaryDirection;
-            newField.SummaryType = field.SummaryType;
+            var newField = new Field
+            {
+                Source = field.Source,
+                IncludeUom = field.IncludeUom,
+                Label = field.Label,
+                SummaryDirection = field.SummaryDirection,
+                SummaryType = field.SummaryType,
+            };
             ((List<string>)newField.Keys).AddRange(field.Keys);
             ((List<string>)newField.StreamReferenceNames).AddRange(field.StreamReferenceNames);
 
