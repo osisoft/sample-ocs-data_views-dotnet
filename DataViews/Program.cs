@@ -47,8 +47,8 @@ namespace DataViews
             var uomColumn1 = "Pressure";
             var uomColumn2 = "Temperature";
             var summaryField = "Pressure";
-            SdsSummaryType summaryType1 = SdsSummaryType.Mean;
-            SdsSummaryType summaryType2 = SdsSummaryType.Total;
+            var summaryType1 = SdsSummaryType.Mean;
+            var summaryType2 = SdsSummaryType.Total;
 
             // Data View Information
             var sampleDataViewId = "DataView_Sample";
@@ -56,8 +56,8 @@ namespace DataViews
             var sampleDataViewDescription = "A Sample Description that describes that this Data View is just used for our sample.";
             var sampleQueryId = "stream";
             var sampleQueryString = "dvTank*";
-            TimeSpan sampleRange = new TimeSpan(1, 0, 0); // range of one hour
-            TimeSpan sampleInterval = new TimeSpan(0, 20, 0); // timespan of twenty minutes
+            var sampleRange = new TimeSpan(1, 0, 0); // range of one hour
+            var sampleInterval = new TimeSpan(0, 20, 0); // timespan of twenty minutes
             #endregion // settings
 
             try
