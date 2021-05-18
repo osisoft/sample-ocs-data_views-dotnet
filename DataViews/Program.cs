@@ -413,14 +413,9 @@ namespace DataViews
 
                 var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
-                // Deep copy twice the field to be summarized
-                Field summaryField1 = new Field() { Source = fieldToSummarize.Source, Label = fieldToSummarize.Label, IncludeUom = fieldToSummarize.IncludeUom };
-                Field summaryField2 = new Field() { Source = fieldToSummarize.Source, Label = fieldToSummarize.Label, IncludeUom = fieldToSummarize.IncludeUom };
-
-                ((List<string>)summaryField1.Keys).AddRange(fieldToSummarize.Keys);
-                ((List<string>)summaryField2.Keys).AddRange(fieldToSummarize.Keys);
-                ((List<string>)summaryField1.StreamReferenceNames).AddRange(fieldToSummarize.StreamReferenceNames);
-                ((List<string>)summaryField2.StreamReferenceNames).AddRange(fieldToSummarize.StreamReferenceNames);
+                // Make two copies of the field to be summarized
+                Field summaryField1 = fieldToSummarize.Clone();
+                Field summaryField2 = fieldToSummarize.Clone();
 
                 // Set the summary properties on the new fields and add them to the FieldSet
                 summaryField1.SummaryDirection = SummaryDirection.Forward;
