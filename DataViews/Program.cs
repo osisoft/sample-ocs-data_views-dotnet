@@ -84,7 +84,7 @@ namespace DataViews
                 #region step1
                 Console.WriteLine("Step 1: Authenticate Against OCS");
 
-                SdsService sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
+                var sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
                 metadataService = sdsService.GetMetadataService(tenantId, namespaceId);
                 var dataService = sdsService.GetDataService(tenantId, namespaceId);
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
@@ -98,11 +98,11 @@ namespace DataViews
                 Console.WriteLine("Step 2: Create types, streams, and data");
 
                 // create both sample types
-                SdsType sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
+                var sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
                 sampleType1.Id = sampleTypeId1;
                 sampleType1 = await metadataService.GetOrCreateTypeAsync(sampleType1).ConfigureAwait(false);
 
-                SdsType sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
+                var sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
                 sampleType2.Id = sampleTypeId2;
                 sampleType2 = await metadataService.GetOrCreateTypeAsync(sampleType2).ConfigureAwait(false);
 
@@ -126,11 +126,11 @@ namespace DataViews
                 sampleStream2 = await metadataService.GetOrCreateStreamAsync(sampleStream2).ConfigureAwait(false);
 
                 // create data
-                DateTime sampleEndTime = DateTime.Now;
-                DateTime sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
+                var sampleEndTime = DateTime.Now;
+                var sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
 
-                List<SampleType1> sampleValues1 = new List<SampleType1>();
-                List<SampleType2> sampleValues2 = new List<SampleType2>();
+                var sampleValues1 = new List<SampleType1>();
+                var sampleValues2 = new List<SampleType2>();
 
                 var rand = new Random();
                 double pressureUpperLimit = 100;
@@ -141,14 +141,14 @@ namespace DataViews
 
                 for (double offsetSeconds = 0; offsetSeconds <= sampleRange.TotalSeconds; offsetSeconds += dataFrequency)
                 {
-                    SampleType1 val1 = new SampleType1
+                    var val1 = new SampleType1
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         Temperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
                         Time = sampleStartTime.AddSeconds(offsetSeconds),
                     };
 
-                    SampleType2 val2 = new SampleType2
+                    var val2 = new SampleType2
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         AmbientTemperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
@@ -208,8 +208,8 @@ namespace DataViews
                 #region step6
                 Console.WriteLine("Step 6: View Items Found by the Query");
 
-                ResolvedItems<DataItem> resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
-                ResolvedItems<DataItem> ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                var resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                var ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Resolved data items for query {query.Id}:");
@@ -234,7 +234,7 @@ namespace DataViews
                 #region step7
                 Console.WriteLine("Step 7: View Fields Available to Include in the Data View");
 
-                ResolvedItems<FieldSet> availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
+                var availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Available fields for data view {dataView.Name}:");
@@ -413,8 +413,8 @@ namespace DataViews
                 var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
                 // Make two copies of the field to be summarized
-                Field summaryField1 = fieldToSummarize.Clone();
-                Field summaryField2 = fieldToSummarize.Clone();
+                var summaryField1 = fieldToSummarize.Clone();
+                var summaryField2 = fieldToSummarize.Clone();
 
                 // Set the summary properties on the new fields and add them to the FieldSet
                 summaryField1.SummaryDirection = SummaryDirection.Forward;
