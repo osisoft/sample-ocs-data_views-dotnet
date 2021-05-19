@@ -269,20 +269,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                var values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step8
 
@@ -298,20 +285,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step9
 
@@ -330,20 +304,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step10
 
@@ -359,57 +320,32 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step11
 
                 // Step 12 - Add Units of Measure Column
                 #region step12
                 Console.WriteLine("Step 12: Add Units of Measure Column");
-                fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
-
+                
+                // Find the data fields for which we want to add a unit of measure column
                 var uomField1 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn1));
                 var uomField2 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn2));
 
+                // Add the unit of measure column for these two data fields
                 uomField1.IncludeUom = true;
                 uomField2.IncludeUom = true;
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
                 #endregion //step 12
 
                 // Step 13 - Add Summary Columns
                 #region step13
                 Console.WriteLine("Step 13: Add Summaries Columns");
-                fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
-
+                
+                // Find the data field for which we want to add summary columns
                 var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
                 // Make two copies of the field to be summarized
@@ -428,20 +364,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
                 #endregion //step 13
             }
             catch (Exception ex)
@@ -530,6 +453,26 @@ namespace DataViews
             catch
             {
             }
+        }
+
+        private static async Task OutputDataViewInterpolatedData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime, TimeSpan interval)
+        {
+            var values = dataviewService.GetDataInterpolatedAsync(
+                    dataViewId,
+                    OutputFormat.Default,
+                    startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
+                    endTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
+                    interval.ToString(),
+                    null,
+                    CacheBehavior.Refresh,
+                    default);
+
+            await foreach (var value in values)
+            {
+                Console.WriteLine(value);
+            }
+
+            Console.WriteLine();
         }
     }
 }
