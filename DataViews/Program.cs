@@ -44,6 +44,11 @@ namespace DataViews
             var sampleStreamDesc2 = "A stream to hold sample Pressure and Ambient Temperature events";
             var sampleFieldToConsolidateTo = "Temperature";
             var sampleFieldToConsolidate = "AmbientTemperature";
+            var uomColumn1 = "Pressure";
+            var uomColumn2 = "Temperature";
+            var summaryField = "Pressure";
+            var summaryType1 = SdsSummaryType.Mean;
+            var summaryType2 = SdsSummaryType.Total;
 
             // Data View Information
             var sampleDataViewId = "DataView_Sample";
@@ -51,8 +56,8 @@ namespace DataViews
             var sampleDataViewDescription = "A Sample Description that describes that this Data View is just used for our sample.";
             var sampleQueryId = "stream";
             var sampleQueryString = "dvTank*";
-            TimeSpan sampleRange = new TimeSpan(1, 0, 0); // range of one hour
-            TimeSpan sampleInterval = new TimeSpan(0, 20, 0); // timespan of twenty minutes
+            var sampleRange = new TimeSpan(1, 0, 0); // range of one hour
+            var sampleInterval = new TimeSpan(0, 20, 0); // timespan of twenty minutes
             #endregion // settings
 
             try
@@ -79,7 +84,7 @@ namespace DataViews
                 #region step1
                 Console.WriteLine("Step 1: Authenticate Against OCS");
 
-                SdsService sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
+                var sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
                 metadataService = sdsService.GetMetadataService(tenantId, namespaceId);
                 var dataService = sdsService.GetDataService(tenantId, namespaceId);
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
@@ -93,11 +98,11 @@ namespace DataViews
                 Console.WriteLine("Step 2: Create types, streams, and data");
 
                 // create both sample types
-                SdsType sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
+                var sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
                 sampleType1.Id = sampleTypeId1;
                 sampleType1 = await metadataService.GetOrCreateTypeAsync(sampleType1).ConfigureAwait(false);
 
-                SdsType sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
+                var sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
                 sampleType2.Id = sampleTypeId2;
                 sampleType2 = await metadataService.GetOrCreateTypeAsync(sampleType2).ConfigureAwait(false);
 
@@ -121,11 +126,11 @@ namespace DataViews
                 sampleStream2 = await metadataService.GetOrCreateStreamAsync(sampleStream2).ConfigureAwait(false);
 
                 // create data
-                DateTime sampleEndTime = DateTime.Now;
-                DateTime sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
+                var sampleEndTime = DateTime.Now;
+                var sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
 
-                List<SampleType1> sampleValues1 = new List<SampleType1>();
-                List<SampleType2> sampleValues2 = new List<SampleType2>();
+                var sampleValues1 = new List<SampleType1>();
+                var sampleValues2 = new List<SampleType2>();
 
                 var rand = new Random();
                 double pressureUpperLimit = 100;
@@ -136,14 +141,14 @@ namespace DataViews
 
                 for (double offsetSeconds = 0; offsetSeconds <= sampleRange.TotalSeconds; offsetSeconds += dataFrequency)
                 {
-                    SampleType1 val1 = new SampleType1
+                    var val1 = new SampleType1
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         Temperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
                         Time = sampleStartTime.AddSeconds(offsetSeconds),
                     };
 
-                    SampleType2 val2 = new SampleType2
+                    var val2 = new SampleType2
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         AmbientTemperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
@@ -171,7 +176,7 @@ namespace DataViews
                 };
                 dataView = await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
                 #endregion //step3
-                
+
                 // Step 4 - Retrieve the Data View
                 #region step4
                 Console.WriteLine("Step 4: Retrieve the Data View");
@@ -203,8 +208,8 @@ namespace DataViews
                 #region step6
                 Console.WriteLine("Step 6: View Items Found by the Query");
 
-                ResolvedItems<DataItem> resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
-                ResolvedItems<DataItem> ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                var resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                var ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Resolved data items for query {query.Id}:");
@@ -229,18 +234,17 @@ namespace DataViews
                 #region step7
                 Console.WriteLine("Step 7: View Fields Available to Include in the Data View");
 
-                ResolvedItems<FieldSet> availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
+                var availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Available fields for data view {dataView.Name}:");
                 foreach (var fieldset in availableFields.Items)
                 {
-                    Console.WriteLine($"Fieldset:");
-                    Console.WriteLine($"QueryId: {fieldset.QueryId}");
-                    Console.WriteLine($"Data Fields: ");
+                    Console.WriteLine($"  QueryId: {fieldset.QueryId}");
+                    Console.WriteLine($"  Data Fields: ");
                     foreach (var datafield in fieldset.DataFields)
                     {
-                        Console.Write($"Label: {datafield.Label}");
+                        Console.Write($"    Label: {datafield.Label}");
                         Console.Write($", Source: {datafield.Source}");
                         foreach (var key in datafield.Keys)
                         {
@@ -250,7 +254,7 @@ namespace DataViews
                         Console.Write('\n');
                     }
                 }
-                
+
                 Console.WriteLine();
                 #endregion //step7
 
@@ -265,20 +269,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                var values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step8
 
@@ -294,20 +285,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step9
 
@@ -326,20 +304,7 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step10
 
@@ -355,22 +320,52 @@ namespace DataViews
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
-                values = dataviewService.GetDataInterpolatedAsync(
-                    dataView.Id,
-                    OutputFormat.Default,
-                    sampleStartTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleEndTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
-                    sampleInterval.ToString(),
-                    null,
-                    CacheBehavior.Refresh,
-                    default);
-
-                await foreach (var value in values)
-                {
-                    Console.WriteLine(value);
-                }
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
 
                 #endregion //step11
+
+                // Step 12 - Add Units of Measure Column
+                #region step12
+                Console.WriteLine("Step 12: Add Units of Measure Column");
+                
+                // Find the data fields for which we want to add a unit of measure column
+                var uomField1 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn1));
+                var uomField2 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn2));
+
+                // Add the unit of measure column for these two data fields
+                uomField1.IncludeUom = true;
+                uomField2.IncludeUom = true;
+
+                await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
+
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                #endregion //step 12
+
+                // Step 13 - Add Summary Columns
+                #region step13
+                Console.WriteLine("Step 13: Add Summaries Columns");
+                
+                // Find the data field for which we want to add summary columns
+                var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
+
+                // Make two copies of the field to be summarized
+                var summaryField1 = fieldToSummarize.Clone();
+                var summaryField2 = fieldToSummarize.Clone();
+
+                // Set the summary properties on the new fields and add them to the FieldSet
+                summaryField1.SummaryDirection = SummaryDirection.Forward;
+                summaryField1.SummaryType = summaryType1;
+
+                summaryField2.SummaryDirection = SummaryDirection.Forward;
+                summaryField2.SummaryType = summaryType2;
+
+                fieldSet.DataFields.Add(summaryField1);
+                fieldSet.DataFields.Add(summaryField2);
+
+                await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
+
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                #endregion //step 13
             }
             catch (Exception ex)
             {
@@ -380,8 +375,8 @@ namespace DataViews
             }
             finally
             {
-                // Step 12 - Delete Sample Objects from OCS
-                #region step12
+                // Step 14 - Delete Sample Objects from OCS
+                #region step14
 
                 if (dataviewService != null)
                 {
@@ -397,7 +392,7 @@ namespace DataViews
                 if (metadataService != null)
                 {
                     // Delete everything
-                    Console.WriteLine("Step 12: Delete Sample Objects from OCS");
+                    Console.WriteLine("Step 14: Delete Sample Objects from OCS");
                     await RunInTryCatch(metadataService.DeleteStreamAsync, sampleStreamId1).ConfigureAwait(false);
                     await RunInTryCatch(metadataService.DeleteStreamAsync, sampleStreamId2).ConfigureAwait(false);
                     await RunInTryCatch(metadataService.DeleteTypeAsync, sampleTypeId1).ConfigureAwait(false);
@@ -412,7 +407,7 @@ namespace DataViews
                     await RunInTryCatchExpectException(metadataService.GetTypeAsync, sampleTypeId2).ConfigureAwait(false);
                 }
 
-                #endregion //step12
+                #endregion //step14
             }
 
             if (test && _toThrow != null)
@@ -458,6 +453,26 @@ namespace DataViews
             catch
             {
             }
+        }
+
+        private static async Task OutputDataViewInterpolatedData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime, TimeSpan interval)
+        {
+            var values = dataviewService.GetDataInterpolatedAsync(
+                    dataViewId,
+                    OutputFormat.Default,
+                    startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
+                    endTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
+                    interval.ToString(),
+                    null,
+                    CacheBehavior.Refresh,
+                    default);
+
+            await foreach (var value in values)
+            {
+                Console.WriteLine(value);
+            }
+
+            Console.WriteLine();
         }
     }
 }
