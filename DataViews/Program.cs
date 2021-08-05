@@ -270,6 +270,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
 
                 #endregion //step8
 
@@ -286,6 +287,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
 
                 #endregion //step9
 
@@ -305,6 +307,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
 
                 #endregion //step10
 
@@ -321,6 +324,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
 
                 #endregion //step11
 
@@ -339,6 +343,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
                 #endregion //step 12
 
                 // Step 13 - Add Summary Columns
@@ -365,6 +370,7 @@ namespace DataViews
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
 
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
                 #endregion //step 13
             }
             catch (Exception ex)
@@ -455,6 +461,15 @@ namespace DataViews
             }
         }
 
+        /// <summary>
+        /// Helper function to output to the console interpolated data for a data view
+        /// </summary>
+        /// <param name="dataviewService">The active IDataViewService object being used</param>
+        /// <param name="dataViewId">The ID of the Data View to be outputted</param>
+        /// <param name="startTime">The start index of the output range</param>
+        /// <param name="endTime">The end index of the output range</param>
+        /// <param name="interval">The time step interval to use for the output range</param>
+        /// <returns>a Task object to await the data call</returns>
         private static async Task OutputDataViewInterpolatedData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime, TimeSpan interval)
         {
             var values = dataviewService.GetDataInterpolatedAsync(
@@ -463,6 +478,33 @@ namespace DataViews
                     startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
                     endTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
                     interval.ToString(),
+                    null,
+                    CacheBehavior.Refresh,
+                    default);
+
+            await foreach (var value in values)
+            {
+                Console.WriteLine(value);
+            }
+
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Helper function to output to the console stored data for a data view
+        /// </summary>
+        /// <param name="dataviewService">The active IDataViewService object being used</param>
+        /// <param name="dataViewId">The ID of the Data View to be outputted</param>
+        /// <param name="startTime">The start index of the output range</param>
+        /// <param name="endTime">The end index of the output range</param>
+        /// <returns>a Task object to await the data call</returns>
+        private static async Task OutputDataViewStoredData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime)
+        {
+            var values = dataviewService.GetDataStoredAsync(
+                    dataViewId,
+                    OutputFormat.Default,
+                    startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
+                    endTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
                     null,
                     CacheBehavior.Refresh,
                     default);

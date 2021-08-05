@@ -1,5 +1,9 @@
 # Version History
 
+## 1.2.0 / 2021-08-09
+
+- Added stored value retrieval
+
 ## 1.1.4 / 2021-07-22
 
 - Standardized code style rules
