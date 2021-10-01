@@ -1,6 +1,6 @@
 # Using OCS Data Views in .NET
 
-**Version:** 1.2.0
+**Version:** 1.2.1
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/osisoft.sample-ocs-data_views-dotnet?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=3541&branchName=main)
 
