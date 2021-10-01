@@ -26,10 +26,6 @@ resources:
 
 variables:
   - template: '/miscellaneous/build_templates/variables.yml@templates'
-  - name: CredFile
-    value: appsettings.json
-  - name: CredFileLibrary
-    value: product-readiness.data_views_dotnet.json
   - name: analysisProject
     value: DataViews_DotNet
 
@@ -39,11 +35,9 @@ jobs:
       name: 00-OSIManaged-Test
       demands: COMPUTERNAME -equals $(buildAgent)
     steps:
-      - template: '/miscellaneous/build_templates/config.yml@templates'
+      - template: '/miscellaneous/build_templates/appsettings.yml@templates'
         parameters:
-          fileOriginal: $(CredFile)
-          fileLibrary: $(CredFileLibrary)
-          filePath: /DataViews
+          secrets: 'TenantId, NamespaceId, ClientId, ClientSecret'
 
       - task: DotNetCoreCLI@2
         displayName: 'Nuget restore'
