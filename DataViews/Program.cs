@@ -73,7 +73,7 @@ namespace DataViews
                 var namespaceId = _configuration["NamespaceId"];
                 var resource = _configuration["Resource"];
                 var clientId = _configuration["ClientId"];
-                var clientKey = _configuration["ClientKey"];
+                var clientSecret = _configuration["ClientSecret"];
                 var apiVersion = _configuration["ApiVersion"];
 
                 (_configuration as ConfigurationRoot).Dispose();
@@ -84,12 +84,12 @@ namespace DataViews
                 #region step1
                 Console.WriteLine("Step 1: Authenticate Against OCS");
 
-                var sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
+                var sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
                 metadataService = sdsService.GetMetadataService(tenantId, namespaceId);
                 var dataService = sdsService.GetDataService(tenantId, namespaceId);
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
 
-                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientKey));
+                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
                 dataviewService = dataviewServiceFactory.GetDataViewService(tenantId, namespaceId);
                 #endregion // step1
 
