@@ -1,6 +1,6 @@
 # Using OCS Data Views in .NET
 
-**Version:** 1.2.1
+**Version:** 1.2.2
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/osisoft.sample-ocs-data_views-dotnet?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=3541&branchName=main)
 
@@ -53,6 +53,6 @@ The SDS Service is secured by obtaining tokens from Azure Active Directory. Such
 
 Tested against DotNet 5.0.
 
-For the main OCS data views samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/DATA_VIEWS_README.md)  
+For the main OCS data views samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS/blob/main/docs/DATA_VIEWS.md)  
 For the main OCS samples page [ReadMe](https://github.com/osisoft/OSI-Samples-OCS)  
 For the main OSIsoft samples page [ReadMe](https://github.com/osisoft/OSI-Samples)
