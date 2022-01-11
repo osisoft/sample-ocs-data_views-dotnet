@@ -51,8 +51,8 @@ namespace DataViews
             var summaryType2 = SdsSummaryType.Total;
 
             // Data View Information
-            var sampleDataViewId = "DataView_Sample";
-            var sampleDataViewName = "DataView_Sample_Name";
+            var sampleDataViewId = "DataView_Sample_DotNet";
+            var sampleDataViewName = "DataView_Sample_Name_DotNet";
             var sampleDataViewDescription = "A Sample Description that describes that this Data View is just used for our sample.";
             var sampleQueryId = "stream";
             var sampleQueryString = "dvTank*";
@@ -372,6 +372,67 @@ namespace DataViews
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime, sampleInterval).ConfigureAwait(false);
                 await OutputDataViewStoredData(dataviewService, dataView.Id, sampleStartTime, sampleEndTime).ConfigureAwait(false);
                 #endregion //step 13
+
+                // Step 14 - Demonstrate accept-verbosity header usage
+                #region step13
+                Console.WriteLine("Step 14: Demonstrate accept-verbosity header usage");
+
+                Console.WriteLine("Writing default values to the streams properties");
+                
+                // Keep the times in the future, guaranteeing no overlaps with existing data
+                var defaultDataStartTime = DateTime.Now.AddHours(1);
+                var defaultDataEndTime = defaultDataStartTime.AddHours(1);
+                var defaultDataInterval = new TimeSpan(1, 0, 0);
+
+                // The first value is only a pressure, keeping temperature as null. Vice versa for the second
+                var defaultValues1 = new List<SampleType1>
+                {
+                    new SampleType1 // Temperature is null
+                    {
+                        Time = defaultDataStartTime,
+                        Pressure = 100,
+                    },
+                    new SampleType1 // Pressure is null
+                    {
+                        Time = defaultDataEndTime,
+                        Temperature = 50,
+                    },
+                };
+
+                var defaultValues2 = new List<SampleType2>
+                {
+                    new SampleType2 // AmbientTemperature is null
+                    {
+                        Time = defaultDataStartTime,
+                        Pressure = 100,
+                    },
+                    new SampleType2 // Pressure is null
+                    {
+                        Time = defaultDataEndTime,
+                        AmbientTemperature = 50,
+                    },
+                };
+
+                await dataService.InsertValuesAsync(sampleStreamId1, defaultValues1).ConfigureAwait(false);
+                await dataService.InsertValuesAsync(sampleStreamId2, defaultValues2).ConfigureAwait(false);
+
+                Console.WriteLine("Data View results will include null values if the accept-verbosity header is not set to non-verbose.");
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
+
+                var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
+                var verbosityHandler = new VerbosityHeaderHandler(false);
+                System.Net.Http.DelegatingHandler[] handlers = { authHandler, verbosityHandler };
+                
+                var nonVerboseDataViewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
+                IDataViewService nonVerboseDataViewService = null;
+                nonVerboseDataViewService = nonVerboseDataViewServiceFactory.GetDataViewService(tenantId, namespaceId);
+
+                Console.WriteLine("Data View results will not include null values if the accept-verbosity header is set to non-verbose.");
+                await OutputDataViewInterpolatedData(nonVerboseDataViewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(nonVerboseDataViewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
+
+                #endregion //step 14
             }
             catch (Exception ex)
             {
@@ -381,8 +442,8 @@ namespace DataViews
             }
             finally
             {
-                // Step 14 - Delete Sample Objects from OCS
-                #region step14
+                // Step 15 - Delete Sample Objects from OCS
+                #region step15
 
                 if (dataviewService != null)
                 {
@@ -413,7 +474,7 @@ namespace DataViews
                     await RunInTryCatchExpectException(metadataService.GetTypeAsync, sampleTypeId2).ConfigureAwait(false);
                 }
 
-                #endregion //step14
+                #endregion //step15
             }
 
             if (test && _toThrow != null)
