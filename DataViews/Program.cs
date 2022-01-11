@@ -385,21 +385,21 @@ namespace DataViews
                 Console.WriteLine("Writing null values to the streams");
                 
                 // Keep the times in the future, guaranteeing no overlaps with existing data
-                var defaultDataStartTime = DateTime.Now.AddHours(1);
-                var defaultDataEndTime = defaultDataStartTime.AddHours(1);
-                var defaultDataInterval = new TimeSpan(1, 0, 0);
+                var nullDataStartTime = DateTime.Now.AddHours(1);
+                var nullDataEndTime = nullDataStartTime.AddHours(1);
+                var nullDataInterval = new TimeSpan(1, 0, 0);
 
                 // The first value is only a pressure, keeping temperature as null. Vice versa for the second
                 var defaultValues1 = new List<SampleType1>
                 {
                     new SampleType1 // Temperature is null
                     {
-                        Time = defaultDataStartTime,
+                        Time = nullDataStartTime,
                         Pressure = 100,
                     },
                     new SampleType1 // Pressure is null
                     {
-                        Time = defaultDataEndTime,
+                        Time = nullDataEndTime,
                         Temperature = 50,
                     },
                 };
@@ -408,12 +408,12 @@ namespace DataViews
                 {
                     new SampleType2 // AmbientTemperature is null
                     {
-                        Time = defaultDataStartTime,
+                        Time = nullDataStartTime,
                         Pressure = 100,
                     },
                     new SampleType2 // Pressure is null
                     {
-                        Time = defaultDataEndTime,
+                        Time = nullDataEndTime,
                         AmbientTemperature = 50,
                     },
                 };
@@ -422,15 +422,15 @@ namespace DataViews
                 await dataService.InsertValuesAsync(sampleStreamId2, defaultValues2).ConfigureAwait(false);
 
                 Console.WriteLine("Data View results will include null values if the accept-verbosity header is not set to non-verbose.");
-                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
-                await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, nullDataStartTime, nullDataEndTime, nullDataInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, nullDataStartTime, nullDataEndTime).ConfigureAwait(false);
 
                 Console.WriteLine("Changing the verbosity setting to non-verbose");
                 verbosityHandler.Verbose = false;
 
                 Console.WriteLine("Data View results will not include null values if the accept-verbosity header is set to non-verbose.");
-                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
-                await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, nullDataStartTime, nullDataEndTime, nullDataInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, nullDataStartTime, nullDataEndTime).ConfigureAwait(false);
 
                 #endregion //step 14
             }
