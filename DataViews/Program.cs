@@ -90,7 +90,7 @@ namespace DataViews
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
 
                 var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
-                var verbosityHandler = new VerbosityHeaderHandler(true);
+                var verbosityHandler = new VerbosityHeaderHandler(true); // Initialize the verbosity setting to 'verbose'
                 System.Net.Http.DelegatingHandler[] handlers = { authHandler, verbosityHandler };
 
                 var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
@@ -424,9 +424,10 @@ namespace DataViews
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
                 await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
 
+                Console.WriteLine("Changing the verbosity setting to non-verbose");
+                verbosityHandler.Verbose = false;
 
                 Console.WriteLine("Data View results will not include null values if the accept-verbosity header is set to non-verbose.");
-                verbosityHandler.Verbose = false;
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
                 await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
 

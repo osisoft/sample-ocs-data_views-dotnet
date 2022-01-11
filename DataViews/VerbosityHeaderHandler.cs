@@ -7,7 +7,6 @@ namespace DataViews
 {
     public class VerbosityHeaderHandler : DelegatingHandler
     {
-        
         public VerbosityHeaderHandler(bool verbose = true)
         {
             Verbose = verbose;
@@ -22,6 +21,7 @@ namespace DataViews
                 throw new ArgumentNullException(nameof(request));
             }
 
+            // If the handler is set to non-verbose, set the accept-verbosity header to non-verbose to prevent null values from being returned from OCS
             if (!Verbose)
             {
                 request?.Headers.Add("accept-verbosity", "non-verbose");
