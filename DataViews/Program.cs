@@ -382,7 +382,7 @@ namespace DataViews
                 #region step14
                 Console.WriteLine("Step 14: Demonstrate accept-verbosity header usage");
 
-                Console.WriteLine("Writing default values to the streams properties");
+                Console.WriteLine("Writing null values to the streams");
                 
                 // Keep the times in the future, guaranteeing no overlaps with existing data
                 var defaultDataStartTime = DateTime.Now.AddHours(1);
