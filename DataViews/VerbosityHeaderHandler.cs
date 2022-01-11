@@ -7,13 +7,13 @@ namespace DataViews
 {
     public class VerbosityHeaderHandler : DelegatingHandler
     {
-        // public bool Verbose { get; set; }
-        private readonly bool _verbose;
-
+        
         public VerbosityHeaderHandler(bool verbose = true)
         {
-            _verbose = verbose;
+            Verbose = verbose;
         }
+
+        public bool Verbose { get; set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -22,7 +22,7 @@ namespace DataViews
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (!_verbose)
+            if (!Verbose)
             {
                 request?.Headers.Add("accept-verbosity", "non-verbose");
             }

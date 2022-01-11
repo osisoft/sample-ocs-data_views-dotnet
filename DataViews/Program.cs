@@ -89,7 +89,11 @@ namespace DataViews
                 var dataService = sdsService.GetDataService(tenantId, namespaceId);
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
 
-                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
+                var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
+                var verbosityHandler = new VerbosityHeaderHandler(true);
+                System.Net.Http.DelegatingHandler[] handlers = { authHandler, verbosityHandler };
+
+                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
                 dataviewService = dataviewServiceFactory.GetDataViewService(tenantId, namespaceId);
                 #endregion // step1
 
@@ -420,17 +424,11 @@ namespace DataViews
                 await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
                 await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
 
-                var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
-                var verbosityHandler = new VerbosityHeaderHandler(false);
-                System.Net.Http.DelegatingHandler[] handlers = { authHandler, verbosityHandler };
-                
-                var nonVerboseDataViewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
-                IDataViewService nonVerboseDataViewService = null;
-                nonVerboseDataViewService = nonVerboseDataViewServiceFactory.GetDataViewService(tenantId, namespaceId);
 
                 Console.WriteLine("Data View results will not include null values if the accept-verbosity header is set to non-verbose.");
-                await OutputDataViewInterpolatedData(nonVerboseDataViewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
-                await OutputDataViewStoredData(nonVerboseDataViewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
+                verbosityHandler.Verbose = false;
+                await OutputDataViewInterpolatedData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime, defaultDataInterval).ConfigureAwait(false);
+                await OutputDataViewStoredData(dataviewService, dataView.Id, defaultDataStartTime, defaultDataEndTime).ConfigureAwait(false);
 
                 #endregion //step 14
             }
