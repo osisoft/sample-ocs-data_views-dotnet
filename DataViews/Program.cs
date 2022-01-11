@@ -379,7 +379,7 @@ namespace DataViews
                 #endregion //step 13
 
                 // Step 14 - Demonstrate accept-verbosity header usage
-                #region step13
+                #region step14
                 Console.WriteLine("Step 14: Demonstrate accept-verbosity header usage");
 
                 Console.WriteLine("Writing default values to the streams properties");
