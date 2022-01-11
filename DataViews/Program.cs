@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -91,7 +92,7 @@ namespace DataViews
 
                 var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
                 var verbosityHandler = new VerbosityHeaderHandler(true); // Initialize the verbosity setting to 'verbose'
-                System.Net.Http.DelegatingHandler[] handlers = { authHandler, verbosityHandler };
+                DelegatingHandler[] handlers = { authHandler, verbosityHandler };
 
                 var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
                 dataviewService = dataviewServiceFactory.GetDataViewService(tenantId, namespaceId);
