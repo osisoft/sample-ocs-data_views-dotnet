@@ -90,11 +90,9 @@ namespace DataViews
                 var dataService = sdsService.GetDataService(tenantId, namespaceId);
                 var tableService = sdsService.GetTableService(tenantId, namespaceId);
 
-                var authHandler = new AuthenticationHandler(uriResource, clientId, clientSecret);
-                var verbosityHandler = new VerbosityHeaderHandler(true); // Initialize the verbosity setting to 'verbose'
-                DelegatingHandler[] handlers = { authHandler, verbosityHandler };
+                var verbosityHandler = new VerbosityHeaderHandler(true); // Creating a named variable since we access it later to change the verbosity
 
-                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), handlers);
+                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret), verbosityHandler);
                 dataviewService = dataviewServiceFactory.GetDataViewService(tenantId, namespaceId);
                 #endregion // step1
 
