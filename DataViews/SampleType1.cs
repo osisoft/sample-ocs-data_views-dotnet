@@ -9,8 +9,8 @@ namespace DataViews
         public DateTime Time { get; set; }
 
         [SdsMember(Uom = "bar")]
-        public double Pressure { get; set; }
+        public double? Pressure { get; set; }
         [SdsMember(Uom = "degree Celsius")]
-        public double Temperature { get; set; }
+        public double? Temperature { get; set; }
     }
 }
