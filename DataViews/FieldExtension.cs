@@ -13,7 +13,7 @@ namespace DataViews
             if (field == null)
                 throw new ArgumentNullException(nameof(field));
 
-            var newField = new Field
+            Field newField = new ()
             {
                 Source = field.Source,
                 IncludeUom = field.IncludeUom,
