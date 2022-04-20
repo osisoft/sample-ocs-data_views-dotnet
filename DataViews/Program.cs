@@ -35,30 +35,30 @@ namespace DataViews
             #region settings
 
             // Sample Data Information
-            var sampleTypeId1 = "Time_SampleType1";
-            var sampleTypeId2 = "Time_SampleType2";
-            var sampleStreamId1 = "dvTank2";
-            var sampleStreamName1 = "Tank2";
-            var sampleStreamDesc1 = "A stream to hold sample Pressure and Temperature events";
-            var sampleStreamId2 = "dvTank100";
-            var sampleStreamName2 = "Tank100";
-            var sampleStreamDesc2 = "A stream to hold sample Pressure and Ambient Temperature events";
-            var sampleFieldToConsolidateTo = "Temperature";
-            var sampleFieldToConsolidate = "AmbientTemperature";
-            var uomColumn1 = "Pressure";
-            var uomColumn2 = "Temperature";
-            var summaryField = "Pressure";
-            var summaryType1 = SdsSummaryType.Mean;
-            var summaryType2 = SdsSummaryType.Total;
+            string sampleTypeId1 = "Time_SampleType1";
+            string sampleTypeId2 = "Time_SampleType2";
+            string sampleStreamId1 = "dvTank2";
+            string sampleStreamName1 = "Tank2";
+            string sampleStreamDesc1 = "A stream to hold sample Pressure and Temperature events";
+            string sampleStreamId2 = "dvTank100";
+            string sampleStreamName2 = "Tank100";
+            string sampleStreamDesc2 = "A stream to hold sample Pressure and Ambient Temperature events";
+            string sampleFieldToConsolidateTo = "Temperature";
+            string sampleFieldToConsolidate = "AmbientTemperature";
+            string uomColumn1 = "Pressure";
+            string uomColumn2 = "Temperature";
+            string summaryField = "Pressure";
+            SdsSummaryType summaryType1 = SdsSummaryType.Mean;
+            SdsSummaryType summaryType2 = SdsSummaryType.Total;
 
             // Data View Information
-            var sampleDataViewId = "DataView_Sample_DotNet";
-            var sampleDataViewName = "DataView_Sample_Name_DotNet";
-            var sampleDataViewDescription = "A Sample Description that describes that this Data View is just used for our sample.";
-            var sampleQueryId = "stream";
-            var sampleQueryString = "dvTank*";
-            var sampleRange = new TimeSpan(1, 0, 0); // range of one hour
-            var sampleInterval = new TimeSpan(0, 20, 0); // timespan of twenty minutes
+            string sampleDataViewId = "DataView_Sample_DotNet";
+            string sampleDataViewName = "DataView_Sample_Name_DotNet";
+            string sampleDataViewDescription = "A Sample Description that describes that this Data View is just used for our sample.";
+            string sampleQueryId = "stream";
+            string sampleQueryString = "dvTank*";
+            TimeSpan sampleRange = new (1, 0, 0); // range of one hour
+            TimeSpan sampleInterval = new (0, 20, 0); // timespan of twenty minutes
             #endregion // settings
 
             try
@@ -70,29 +70,29 @@ namespace DataViews
                     .AddJsonFile("appsettings.json")
                     .Build();
 
-                var tenantId = _configuration["TenantId"];
-                var namespaceId = _configuration["NamespaceId"];
-                var resource = _configuration["Resource"];
-                var clientId = _configuration["ClientId"];
-                var clientSecret = _configuration["ClientSecret"];
-                var apiVersion = _configuration["ApiVersion"];
+                string tenantId = _configuration["TenantId"];
+                string namespaceId = _configuration["NamespaceId"];
+                string resource = _configuration["Resource"];
+                string clientId = _configuration["ClientId"];
+                string clientSecret = _configuration["ClientSecret"];
+                string apiVersion = _configuration["ApiVersion"];
 
                 (_configuration as ConfigurationRoot).Dispose();
-                var uriResource = new Uri(resource);
+                Uri uriResource = new (resource);
                 #endregion // configurationSettings
 
                 // Step 1 - Authenticate Against ADH
                 #region step1
                 Console.WriteLine("Step 1: Authenticate Against ADH");
 
-                var sdsService = new SdsService(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
+                SdsService sdsService = new (new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
                 metadataService = sdsService.GetMetadataService(tenantId, namespaceId);
-                var dataService = sdsService.GetDataService(tenantId, namespaceId);
-                var tableService = sdsService.GetTableService(tenantId, namespaceId);
+                ISdsDataService dataService = sdsService.GetDataService(tenantId, namespaceId);
+                ISdsTableService tableService = sdsService.GetTableService(tenantId, namespaceId);
 
-                var verbosityHandler = new VerbosityHeaderHandler(true); // Creating a named variable since we access it later to change the verbosity
+                VerbosityHeaderHandler verbosityHandler = new (true); // Creating a named variable since we access it later to change the verbosity
 
-                var dataviewServiceFactory = new DataViewServiceFactory(new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret), verbosityHandler);
+                DataViewServiceFactory dataviewServiceFactory = new (new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret), verbosityHandler);
                 dataviewService = dataviewServiceFactory.GetDataViewService(tenantId, namespaceId);
                 #endregion // step1
 
@@ -101,16 +101,16 @@ namespace DataViews
                 Console.WriteLine("Step 2: Create types, streams, and data");
 
                 // create both sample types
-                var sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
+                SdsType sampleType1 = SdsTypeBuilder.CreateSdsType<SampleType1>();
                 sampleType1.Id = sampleTypeId1;
                 sampleType1 = await metadataService.GetOrCreateTypeAsync(sampleType1).ConfigureAwait(false);
 
-                var sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
+                SdsType sampleType2 = SdsTypeBuilder.CreateSdsType<SampleType2>();
                 sampleType2.Id = sampleTypeId2;
                 sampleType2 = await metadataService.GetOrCreateTypeAsync(sampleType2).ConfigureAwait(false);
 
                 // create streams
-                var sampleStream1 = new SdsStream
+                SdsStream sampleStream1 = new ()
                 {
                     Id = sampleStreamId1,
                     Name = sampleStreamName1,
@@ -119,7 +119,7 @@ namespace DataViews
                 };
                 sampleStream1 = await metadataService.GetOrCreateStreamAsync(sampleStream1).ConfigureAwait(false);
 
-                var sampleStream2 = new SdsStream
+                SdsStream sampleStream2 = new ()
                 {
                     Id = sampleStreamId2,
                     Name = sampleStreamName2,
@@ -129,13 +129,13 @@ namespace DataViews
                 sampleStream2 = await metadataService.GetOrCreateStreamAsync(sampleStream2).ConfigureAwait(false);
 
                 // create data
-                var sampleEndTime = DateTime.Now;
-                var sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
+                DateTime sampleEndTime = DateTime.Now;
+                DateTime sampleStartTime = sampleEndTime.AddSeconds(-sampleRange.TotalSeconds);
 
-                var sampleValues1 = new List<SampleType1>();
-                var sampleValues2 = new List<SampleType2>();
+                List<SampleType1> sampleValues1 = new ();
+                List<SampleType2> sampleValues2 = new ();
 
-                var rand = new Random();
+                Random rand = new ();
                 double pressureUpperLimit = 100;
                 double pressureLowerLimit = 0;
                 double tempUpperLimit = 70;
@@ -144,14 +144,14 @@ namespace DataViews
 
                 for (double offsetSeconds = 0; offsetSeconds <= sampleRange.TotalSeconds; offsetSeconds += dataFrequency)
                 {
-                    var val1 = new SampleType1
+                    SampleType1 val1 = new ()
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         Temperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
                         Time = sampleStartTime.AddSeconds(offsetSeconds),
                     };
 
-                    var val2 = new SampleType2
+                    SampleType2 val2 = new ()
                     {
                         Pressure = (rand.NextDouble() * (pressureUpperLimit - pressureLowerLimit)) + pressureLowerLimit,
                         AmbientTemperature = (rand.NextDouble() * (tempUpperLimit - tempLowerLimit)) + tempLowerLimit,
@@ -171,7 +171,7 @@ namespace DataViews
                 // Step 3 - Create a Data View 
                 #region step3
                 Console.WriteLine("Step 3: Create a Data View");
-                var dataView = new DataView
+                DataView dataView = new ()
                 {
                     Id = sampleDataViewId,
                     Name = sampleDataViewName,
@@ -195,7 +195,7 @@ namespace DataViews
                 #region step5
                 Console.WriteLine("Step 5: Add a Query for Data Items");
 
-                var query = new Query
+                Query query = new ()
                 {
                     Id = sampleQueryId,
                     Value = sampleQueryString,
@@ -211,12 +211,12 @@ namespace DataViews
                 #region step6
                 Console.WriteLine("Step 6: View Items Found by the Query");
 
-                var resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
-                var ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                ResolvedItems<DataItem> resolvedDataItems = await dataviewService.GetDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
+                ResolvedItems<DataItem> ineligibleDataItems = await dataviewService.GetIneligibleDataItemsAsync(dataView.Id, query.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Resolved data items for query {query.Id}:");
-                foreach (var dataItem in resolvedDataItems.Items)
+                foreach (DataItem dataItem in resolvedDataItems.Items)
                 {
                     Console.WriteLine($"Name: {dataItem.Name}; ID: {dataItem.Id}");
                 }
@@ -224,7 +224,7 @@ namespace DataViews
                 Console.WriteLine();
 
                 Console.WriteLine($"Ineligible data items for query {query.Id}:");
-                foreach (var dataItem in ineligibleDataItems.Items)
+                foreach (DataItem dataItem in ineligibleDataItems.Items)
                 {
                     Console.WriteLine($"Name: {dataItem.Name}; ID: {dataItem.Id}");
                 }
@@ -237,19 +237,19 @@ namespace DataViews
                 #region step7
                 Console.WriteLine("Step 7: View Fields Available to Include in the Data View");
 
-                var availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
+                ResolvedItems<FieldSet> availableFields = await dataviewService.GetAvailableFieldSetsAsync(dataView.Id).ConfigureAwait(false);
 
                 Console.WriteLine();
                 Console.WriteLine($"Available fields for data view {dataView.Name}:");
-                foreach (var fieldset in availableFields.Items)
+                foreach (FieldSet fieldset in availableFields.Items)
                 {
                     Console.WriteLine($"  QueryId: {fieldset.QueryId}");
                     Console.WriteLine($"  Data Fields: ");
-                    foreach (var datafield in fieldset.DataFields)
+                    foreach (Field datafield in fieldset.DataFields)
                     {
                         Console.Write($"    Label: {datafield.Label}");
                         Console.Write($", Source: {datafield.Source}");
-                        foreach (var key in datafield.Keys)
+                        foreach (string key in datafield.Keys)
                         {
                             Console.Write($", Key: {key}");
                         }
@@ -265,7 +265,7 @@ namespace DataViews
                 #region step8
                 Console.WriteLine("Step 8: Include Some of the Available Fields");
 
-                foreach (var field in availableFields.Items)
+                foreach (FieldSet field in availableFields.Items)
                 {
                     dataView.DataFieldSets.Add(field);
                 }
@@ -298,7 +298,7 @@ namespace DataViews
                 #region step10
                 Console.WriteLine("Step 10: Identify Data Items");
 
-                foreach (var thisFieldSet in dataView.DataFieldSets.ToList())
+                foreach (FieldSet thisFieldSet in dataView.DataFieldSets.ToList())
                 {
                     thisFieldSet.IdentifyingField = new Field
                     {
@@ -318,10 +318,10 @@ namespace DataViews
                 #region step11
                 Console.WriteLine("Step 11: Consolidate Data Fields");
 
-                var fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
+                FieldSet fieldSet = dataView.DataFieldSets.Single(a => a.QueryId == sampleQueryId);
                 fieldSet.DataFields.Remove(fieldSet.DataFields.Single(a => a.Keys.Contains(sampleFieldToConsolidate)));
 
-                var consolidatingField = fieldSet.DataFields.Single(a => a.Keys.Contains(sampleFieldToConsolidateTo));
+                Field consolidatingField = fieldSet.DataFields.Single(a => a.Keys.Contains(sampleFieldToConsolidateTo));
                 consolidatingField.Keys.Add(sampleFieldToConsolidate);
 
                 await dataviewService.CreateOrUpdateDataViewAsync(dataView).ConfigureAwait(false);
@@ -334,10 +334,10 @@ namespace DataViews
                 // Step 12 - Add Units of Measure Column
                 #region step12
                 Console.WriteLine("Step 12: Add Units of Measure Column");
-                
+
                 // Find the data fields for which we want to add a unit of measure column
-                var uomField1 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn1));
-                var uomField2 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn2));
+                Field uomField1 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn1));
+                Field uomField2 = fieldSet.DataFields.Single(a => a.Keys.Contains(uomColumn2));
 
                 // Add the unit of measure column for these two data fields
                 uomField1.IncludeUom = true;
@@ -352,13 +352,13 @@ namespace DataViews
                 // Step 13 - Add Summary Columns
                 #region step13
                 Console.WriteLine("Step 13: Add Summaries Columns");
-                
+
                 // Find the data field for which we want to add summary columns
-                var fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
+                Field fieldToSummarize = fieldSet.DataFields.Single(a => a.Keys.Contains(summaryField));
 
                 // Make two copies of the field to be summarized
-                var summaryField1 = fieldToSummarize.Clone();
-                var summaryField2 = fieldToSummarize.Clone();
+                Field summaryField1 = fieldToSummarize.Clone();
+                Field summaryField2 = fieldToSummarize.Clone();
 
                 // Set the summary properties on the new fields and add them to the FieldSet
                 summaryField1.SummaryDirection = SummaryDirection.Forward;
@@ -381,14 +381,14 @@ namespace DataViews
                 Console.WriteLine("Step 14: Demonstrate accept-verbosity header usage");
 
                 Console.WriteLine("Writing null values to the streams");
-                
+
                 // Keep the times in the future, guaranteeing no overlaps with existing data
-                var nullDataStartTime = DateTime.Now.AddHours(1);
-                var nullDataEndTime = nullDataStartTime.AddHours(1);
-                var nullDataInterval = new TimeSpan(1, 0, 0);
+                DateTime nullDataStartTime = DateTime.Now.AddHours(1);
+                DateTime nullDataEndTime = nullDataStartTime.AddHours(1);
+                TimeSpan nullDataInterval = new (1, 0, 0);
 
                 // The first value is only a pressure, keeping temperature as null. Vice versa for the second
-                var defaultValues1 = new List<SampleType1>
+                List<SampleType1> defaultValues1 = new ()
                 {
                     new SampleType1 // Temperature is null
                     {
@@ -402,7 +402,7 @@ namespace DataViews
                     },
                 };
 
-                var defaultValues2 = new List<SampleType2>
+                List<SampleType2> defaultValues2 = new ()
                 {
                     new SampleType2 // AmbientTemperature is null
                     {
@@ -531,7 +531,7 @@ namespace DataViews
         /// <returns>a Task object to await the data call</returns>
         private static async Task OutputDataViewInterpolatedData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime, TimeSpan interval)
         {
-            var values = dataviewService.GetDataInterpolatedAsync(
+            IAsyncEnumerable<string> values = dataviewService.GetDataInterpolatedAsync(
                     dataViewId,
                     OutputFormat.Default,
                     startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
@@ -541,7 +541,7 @@ namespace DataViews
                     CacheBehavior.Refresh,
                     default);
 
-            await foreach (var value in values)
+            await foreach (string value in values)
             {
                 Console.WriteLine(value);
             }
@@ -559,7 +559,7 @@ namespace DataViews
         /// <returns>a Task object to await the data call</returns>
         private static async Task OutputDataViewStoredData(IDataViewService dataviewService, string dataViewId, DateTime startTime, DateTime endTime)
         {
-            var values = dataviewService.GetDataStoredAsync(
+            IAsyncEnumerable<string> values = dataviewService.GetDataStoredAsync(
                     dataViewId,
                     OutputFormat.Default,
                     startTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture),
@@ -568,7 +568,7 @@ namespace DataViews
                     CacheBehavior.Refresh,
                     default);
 
-            await foreach (var value in values)
+            await foreach (string value in values)
             {
                 Console.WriteLine(value);
             }
