@@ -1,8 +1,5 @@
 # Using ADH Data Views in .NET
 
-| :loudspeaker: **Notice**: Samples have been updated to reflect that they work on AVEVA Data Hub.  The samples also work on OSIsoft Cloud Services unless otherwise noted. |
-| -----------------------------------------------------------------------------------------------|  
-
 **Version:** 1.4.4
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-data_views-dotnet?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=3541&branchName=main)
