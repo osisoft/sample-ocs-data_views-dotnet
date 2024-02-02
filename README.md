@@ -1,6 +1,6 @@
 # Using ADH Data Views in .NET
 
-**Version:** 1.4.4
+**Version:** 1.4.5
 
 [![Build Status](https://dev.azure.com/osieng/engineering/_apis/build/status/product-readiness/ADH/aveva.sample-adh-data_views-dotnet?branchName=main)](https://dev.azure.com/osieng/engineering/_build/latest?definitionId=3541&branchName=main)
 
