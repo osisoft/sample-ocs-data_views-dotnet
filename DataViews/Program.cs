@@ -81,9 +81,9 @@ namespace DataViews
                 Uri uriResource = new (resource);
                 #endregion // configurationSettings
 
-                // Step 1 - Authenticate Against ADH
+                // Step 1 - Authenticate Against Cds
                 #region step1
-                Console.WriteLine("Step 1: Authenticate Against ADH");
+                Console.WriteLine("Step 1: Authenticate Against Cds");
 
                 SdsService sdsService = new (new Uri(resource), new AuthenticationHandler(uriResource, clientId, clientSecret));
                 metadataService = sdsService.GetMetadataService(tenantId, namespaceId);
@@ -440,7 +440,7 @@ namespace DataViews
             }
             finally
             {
-                // Step 15 - Delete Sample Objects from ADH
+                // Step 15 - Delete Sample Objects from Cds
                 #region step15
 
                 if (dataviewService != null)
@@ -457,7 +457,7 @@ namespace DataViews
                 if (metadataService != null)
                 {
                     // Delete everything
-                    Console.WriteLine("Step 14: Delete Sample Objects from ADH");
+                    Console.WriteLine("Step 14: Delete Sample Objects from Cds");
                     await RunInTryCatch(metadataService.DeleteStreamAsync, sampleStreamId1).ConfigureAwait(false);
                     await RunInTryCatch(metadataService.DeleteStreamAsync, sampleStreamId2).ConfigureAwait(false);
                     await RunInTryCatch(metadataService.DeleteTypeAsync, sampleTypeId1).ConfigureAwait(false);
